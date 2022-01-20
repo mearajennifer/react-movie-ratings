@@ -1,0 +1,125 @@
+"""Server for movie ratings app."""
+
+from flask import (Flask, render_template, request, session, jsonify)
+from model import connect_to_db, User, Movie, Rating
+import crud
+
+app = Flask(__name__)
+app.secret_key = "dev"
+
+
+##################################################################
+# ROUTES #
+##################################################################
+
+@app.route("/")
+def show_homepage():
+    return render_template("index.html")
+
+@app.route("/api/movies")
+def show_all_movies():
+    movies = crud.query_all_movies()
+    return jsonify({movie.movie_id: movie.to_dict() for movie in movies})
+
+# @app.route("/api/movies/<movie_id>")
+# def show_movie(movie_id):
+#     movie = crud.query_movie_by_id(movie_id)
+
+#     if "user_id" in session:
+#         user = crud.query_user_by_id(session["user_id"])
+#         rating = crud.query_rating(user, movie)
+#     else:
+#         rating = None
+    
+#     average = crud.get_average_movie_rating(movie)
+
+#     return render_template('movie_details.html', movie=movie, rating=rating, average=average)
+
+# @app.route("/movies/<movie_id>/rate", methods=["POST"])
+# def create_rating(movie_id):
+#     if "user_id" not in session:
+#         flash("Please login to start rating movies.")
+#         return redirect("/")
+
+#     user_id = session["user_id"]
+#     score = request.form.get("score")
+
+#     user = crud.query_user_by_id(user_id)
+#     movie = crud.query_movie_by_id(movie_id)
+
+#     rating = crud.query_rating(user, movie)
+#     # {{ '%0.2f'| format(average|float) }}
+
+#     if rating:
+#         crud.update_rating(rating, score)
+#     else:
+#         new_rating = crud.create_rating(user, movie, score)
+
+#     flash(f"You've rated rated {movie.title} {score} out of 5.")
+
+#     return redirect(f"/movies/{movie.movie_id}")
+
+@app.route("/api/users", methods=["GET"])
+def show_all_users():
+    users = crud.query_all_users()
+    return jsonify({user.user_id: user.to_dict() for user in users})
+
+@app.route("/api/register", methods=["POST"])
+def register_user():
+    """Create user."""
+
+    email = request.form.get("email")
+    password = request.form.get("pass")
+
+    verify_email = crud.query_user_by_email(email)
+    if verify_email:
+        success = False
+        msg = "A user with that email is already registered. Please log in."
+    else:
+        new_user = crud.create_user(email, password)
+        success = True
+        msg = "Thanks for registering! Please log in."
+    
+    return jsonify({"success": success, "msg": msg})
+
+@app.route("/api/login", methods=["POST"])
+def login_user():
+    """Login user."""
+
+    email = request.form.get("email")
+    password = request.form.get("pass")
+
+    user = crud.query_user_by_email(email)
+    if user:
+        if password == user.password:
+            success = True
+            msg = "You are now logged in!"
+        else:
+            success = False
+            msg = "Incorrect password."
+    else:
+        success = False
+        msg = "No user with that password exists!"
+
+    return jsonify({
+        "success": success, 
+        "msg": msg, 
+        "user": {
+            "user_id": user.user_id,
+            "email": user.email,
+        }
+    })
+
+# @app.route("/users/<user_id>")
+# def show_user(user_id):
+#     user = crud.query_user_by_id(user_id)
+#     return render_template('user_details.html', user=user)
+
+
+
+
+if __name__ == "__main__":
+    # DebugToolbarExtension(app)
+    connect_to_db(app)
+
+    app.run(host="0.0.0.0", debug=True)
