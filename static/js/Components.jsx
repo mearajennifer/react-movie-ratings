@@ -244,7 +244,8 @@ function AllMoviesPage(props) {
 
 function MoviePage(props) {
     const {aMovie} = props;
-    console.log(aMovie);
+    const [ratings, setRatings] = React.useState("");
+
     const formatDate = (data) => {
         let month = data.slice(8, 11);
         let date = data.slice(5, 7);
@@ -253,16 +254,38 @@ function MoviePage(props) {
         }
         let year = data.slice(12, 16);
         let dateString = month + " " + date + ", " + year + " ";
-        console.log(dateString);
         return dateString;
     }
-    formatDate(aMovie.release_date);
+
+    React.useEffect(() => {
+        fetch("/api/avg-movie-rating", {
+            method: "POST",
+            body: JSON.stringify({"movie_id": aMovie.movie_id}),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            let stars = "";
+            if (data.success === true) {
+                for (let i=0; i<data.avgRating; i+=1) {
+                    stars = stars + "⭐ ";
+                }
+                setRatings(stars + `${data.count} reviews`);
+            } else {
+                setRatings("Not rated");
+            }
+        })
+    }, []);
+
     return (
         <React.Fragment>
             <h1>{aMovie.title}</h1>
                 <img src={aMovie.poster_path} style={{height:"400px"}} />
-                <p>{formatDate(aMovie.release_date)}</p>
-                <p>{aMovie.overview}</p>
+                <p><b>Average Rating: </b> {ratings}</p>
+                <p><b>Released: </b> {formatDate(aMovie.release_date)}</p>
+                <p><b>Description: </b> {aMovie.overview}</p>
         </React.Fragment>
     );
 }

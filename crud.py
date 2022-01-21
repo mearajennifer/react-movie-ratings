@@ -78,7 +78,7 @@ def get_average_movie_rating(movie):
         for rating in ratings:
             total += rating.score
             count += 1
-        return int(round(total/count, 0))
+        return [int(round(total/count, 0)), count]
     
     return None
 
