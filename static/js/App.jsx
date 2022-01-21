@@ -3,6 +3,7 @@ function App() {
     const [users, setUsers] = React.useState({});
     const [movies, setMovies] =  React.useState({});
     const [loggedIn, setLoggedIn] = React.useState(false);
+    const [aMovie, setAMovie] = React.useState({});
 
 
     // Make API call to server for movies data
@@ -37,12 +38,18 @@ function App() {
                     <Login currentUser={currentUser} 
                         setCurrentUser={setCurrentUser} 
                         loggedIn={loggedIn}
-                        setLoggedIn={setLoggedIn} /> 
-                    }
+                        setLoggedIn={setLoggedIn} /> }
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route exact path="/movies">
-                    <AllMoviesPage movies={movies} />
+                    <AllMoviesPage 
+                        movies={movies} 
+                        aMovie={aMovie} 
+                        setAMovie={setAMovie}/>
+                </ReactRouterDOM.Route>
+
+                <ReactRouterDOM.Route path="/movies/:id">
+                    <MoviePage aMovie={aMovie} />
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route exact path="/users">

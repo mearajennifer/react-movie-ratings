@@ -218,15 +218,16 @@ function UserProfile(props) {
 }
 
 function AllMoviesPage(props) {
-    const {movies} = props;
+    const {movies, aMovie, setAMovie} = props;
     const movieDivs = [];
 
     for (let movie in movies) {
-        console.log(movies[movie]);
         movieDivs.push(
             <div key={movies[movie].movie_id}>
-                <img src={movies[movie].poster_path} style={{height:"100px"}} />
-                <p>{movies[movie].title}</p>
+                <ReactRouterDOM.Link to={`/movies/${movie}`} onClick={() => setAMovie(movies[movie])}>
+                    <img src={movies[movie].poster_path} style={{height:"100px"}} />
+                    <p>{movies[movie].title}</p>
+                </ReactRouterDOM.Link>
             </div>
         );
     }
@@ -237,6 +238,31 @@ function AllMoviesPage(props) {
             <div>
                 {movieDivs}
             </div>
+        </React.Fragment>
+    );
+}
+
+function MoviePage(props) {
+    const {aMovie} = props;
+    console.log(aMovie);
+    const formatDate = (data) => {
+        let month = data.slice(8, 11);
+        let date = data.slice(5, 7);
+        if (date[0] == 0) {
+            date = date[1];
+        }
+        let year = data.slice(12, 16);
+        let dateString = month + " " + date + ", " + year + " ";
+        console.log(dateString);
+        return dateString;
+    }
+    formatDate(aMovie.release_date);
+    return (
+        <React.Fragment>
+            <h1>{aMovie.title}</h1>
+                <img src={aMovie.poster_path} style={{height:"400px"}} />
+                <p>{formatDate(aMovie.release_date)}</p>
+                <p>{aMovie.overview}</p>
         </React.Fragment>
     );
 }
