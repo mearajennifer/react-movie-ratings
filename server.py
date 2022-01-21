@@ -3,9 +3,13 @@
 from flask import (Flask, render_template, request, session, jsonify)
 from model import connect_to_db, User, Movie, Rating
 import crud
+from random import randint, choice
 
 app = Flask(__name__)
 app.secret_key = "dev"
+
+GENRES = ["Action", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Thriller"]
+
 
 
 ##################################################################
@@ -68,8 +72,11 @@ def show_all_users():
 def register_user():
     """Create user."""
 
-    email = request.form.get("email")
-    password = request.form.get("pass")
+    email = request.json.get("email")
+    password = request.json.get("pass")
+    print()
+    print(f"Received register email:{email}, pass: {password}")
+    print()
 
     verify_email = crud.query_user_by_email(email)
     if verify_email:
@@ -77,20 +84,30 @@ def register_user():
         msg = "A user with that email is already registered. Please log in."
     else:
         new_user = crud.create_user(email, password)
+        print()
+        print(new_user)
+        print()
         success = True
         msg = "Thanks for registering! Please log in."
     
     return jsonify({"success": success, "msg": msg})
 
+
 @app.route("/api/login", methods=["POST"])
 def login_user():
     """Login user."""
 
-    email = request.form.get("email")
-    password = request.form.get("pass")
+    email = request.json.get("loginEmail")
+    password = request.json.get("loginPass")
+    print()
+    print(f"Received login email:{email}, pass: {password}")
+    print()
 
     user = crud.query_user_by_email(email)
     if user:
+        print()
+        print(user)
+        print()
         if password == user.password:
             success = True
             msg = "You are now logged in!"
@@ -110,11 +127,44 @@ def login_user():
         }
     })
 
-# @app.route("/users/<user_id>")
-# def show_user(user_id):
-#     user = crud.query_user_by_id(user_id)
-#     return render_template('user_details.html', user=user)
 
+@app.route("/api/user-data", methods=["POST"])
+def get_user_data():
+    # Need to update user table to store more info on user
+    # for now we'll make it up
+    user_id = request.json.get("userId")
+    user = crud.query_user_by_id(user_id)
+
+    fav_movie = crud.query_movie_by_id(randint(1,80))
+    fav_genre = choice(GENRES)
+    print()
+    print(f"user_id: {user_id} favMovie: {fav_movie.title}, favGenre: {fav_genre}")
+    print()
+
+    return jsonify({"userId": user_id, "favMovie": fav_movie.title, "favGenre": fav_genre})
+
+
+@app.route("/api/user-ratings", methods=["POST"])
+def get_user_ratings():
+    user_id = request.json.get("userId")
+    ratings = Rating.query.filter_by(user_id=user_id).all()
+    print()
+    print(f"user_id is {user_id}")
+    print("ratings are")
+    print(ratings)
+    print()
+
+    user_ratings = []
+
+    for rating in ratings:
+        user_ratings.append({
+            "movieId": rating.movie_id,
+            "movieTitle": rating.movie.title,
+            "movieImg": rating.movie.poster_path,
+            "userRating": rating.score,
+        })
+
+    return jsonify({"userRatings": user_ratings})
 
 
 
