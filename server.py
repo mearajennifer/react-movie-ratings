@@ -26,7 +26,7 @@ def show_all_movies():
     return jsonify({movie.movie_id: movie.to_dict() for movie in movies})
 
 @app.route("/api/avg-movie-rating", methods=["POST"])
-def get_movie_ratings():
+def get_avg_movie_ratings():
     movie_id = request.json.get("movie_id")
     print()
     print(f"id: {movie_id}")
@@ -49,6 +49,31 @@ def get_movie_ratings():
         success = True
     
     return jsonify({"success": success, "avgRating": avg_rating, "count": count})
+
+@app.route("/api/user-rating", methods=["POST"])
+def get_user_movie_rating():
+    movie_id = request.json.get("movieId")
+    user_id = request.json.get("userId")
+    print()
+    print(f"id: {movie_id}")
+    print(f"user_id: {user_id}")
+    
+    success = False
+    rating = None;
+
+    if user_id:
+        user = crud.query_user_by_id(user_id)
+        movie = crud.query_movie_by_id(movie_id)
+
+    
+        rating = crud.query_rating(user, movie)
+        if rating:
+            success = True
+    
+    print({"success": success, "rating": rating.score})
+    print()
+    
+    return jsonify({"success": success, "rating": rating.score})
         
 
 # @app.route("/api/movies/<movie_id>")

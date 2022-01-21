@@ -49,7 +49,10 @@ function App() {
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route path="/movies/:id">
-                    <MoviePage aMovie={aMovie} />
+                    <MoviePage 
+                        aMovie={aMovie} 
+                        currentUser={currentUser} 
+                        loggedIn={loggedIn}/>
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route exact path="/users">

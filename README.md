@@ -6,10 +6,13 @@ Completed:
 - App (container) component
 - User registration / login component
 - User profile component
+- Movies component
+- Individual movies component
+- Average rating for a movie
+- Users rating for a movie
 
 To Do:
-- Movies component
 - Users component
 - Search component
-- Ratings
+- Make a rating
 - React-Bootstrap

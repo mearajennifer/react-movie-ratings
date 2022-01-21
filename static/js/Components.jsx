@@ -243,8 +243,9 @@ function AllMoviesPage(props) {
 }
 
 function MoviePage(props) {
-    const {aMovie} = props;
+    const {aMovie, currentUser, loggedIn} = props;
     const [ratings, setRatings] = React.useState("");
+    const [userRating, setUserRating] = React.useState("");
 
     const formatDate = (data) => {
         let month = data.slice(8, 11);
@@ -284,9 +285,50 @@ function MoviePage(props) {
             <h1>{aMovie.title}</h1>
                 <img src={aMovie.poster_path} style={{height:"400px"}} />
                 <p><b>Average Rating: </b> {ratings}</p>
+                
+                { loggedIn ?
+                <UserMovieRating 
+                    currentUser={currentUser} 
+                    aMovie={aMovie} 
+                    userRating={userRating} 
+                    setUserRating={setUserRating}/> : 
+                <p></p> }
+
                 <p><b>Released: </b> {formatDate(aMovie.release_date)}</p>
                 <p><b>Description: </b> {aMovie.overview}</p>
         </React.Fragment>
+    );
+}
+
+function UserMovieRating(props) {
+    const {currentUser, aMovie, userRating, setUserRating} = props;
+    React.useEffect(() => {
+        fetch("/api/user-rating", {
+            method: "POST",
+            body: JSON.stringify({
+                "userId": currentUser.userId,
+                "movieId": aMovie.movie_id,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            let userStars = "";
+            if (data.success === true) {
+                for (let i=0; i<data.rating; i+=1) {
+                    userStars = userStars + "⭐ ";
+                }
+                setUserRating(userStars);
+            } else {
+                setUserRating("Not rated");
+            }
+        })
+    }, [userRating]);
+
+    return (
+        <p><b>Your Rating: </b> {userRating}</p>    
     );
 }
 
