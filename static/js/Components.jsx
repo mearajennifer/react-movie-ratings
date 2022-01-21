@@ -218,8 +218,26 @@ function UserProfile(props) {
 }
 
 function AllMoviesPage(props) {
+    const {movies} = props;
+    const movieDivs = [];
+
+    for (let movie in movies) {
+        console.log(movies[movie]);
+        movieDivs.push(
+            <div key={movies[movie].movie_id}>
+                <img src={movies[movie].poster_path} style={{height:"100px"}} />
+                <p>{movies[movie].title}</p>
+            </div>
+        );
+    }
+
     return (
-        <div>All Movies</div>
+        <React.Fragment>
+            <h1>Movies</h1>
+            <div>
+                {movieDivs}
+            </div>
+        </React.Fragment>
     );
 }
 
