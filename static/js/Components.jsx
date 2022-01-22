@@ -1,3 +1,5 @@
+const { useState } = require("react");
+
 function Loading() {
     return (
         <React.Fragment>
@@ -39,8 +41,9 @@ function Login(props) {
     // Handle registration form submit
     const handleRegistration = (e) => {
         e.preventDefault();
-        console.log(regEmail);
-        console.log(regPass);
+        console.log(`regEmail: ${regEmail}`);
+        console.log(`regPass: ${regPass}`);
+
         fetch("/api/register", {
             method: "POST",
             headers: {
@@ -218,19 +221,28 @@ function UserProfile(props) {
 }
 
 function AllMoviesPage(props) {
-    const {movies, aMovie, setAMovie} = props;
-    const movieDivs = [];
+    const {aMovie, setAMovie} = props;
+    const [movieDivs, setMovieDivs] = React.useState([]);
 
-    for (let movie in movies) {
-        movieDivs.push(
-            <div key={movies[movie].movie_id}>
-                <ReactRouterDOM.Link to={`/movies/${movie}`} onClick={() => setAMovie(movies[movie])}>
-                    <img src={movies[movie].poster_path} style={{height:"100px"}} />
-                    <p>{movies[movie].title}</p>
-                </ReactRouterDOM.Link>
-            </div>
-        );
-    }
+    // Make API call to server for movies data
+    React.useEffect(() => {
+        const makeMovies = [];
+        fetch("/api/movies")
+        .then((response) => response.json())
+        .then((movies) => {
+            for (let movieId in movies) {
+                makeMovies.push(
+                    <div key={movies[movieId].movie_id}>
+                        <ReactRouterDOM.Link to={`/movies/${movieId}`} onClick={() => setAMovie(movies[movieId])}>
+                            <img src={movies[movieId].poster_path} style={{height:"100px"}} />
+                            <p>{movies[movieId].title}</p>
+                        </ReactRouterDOM.Link>
+                    </div>
+                );
+            }
+            setMovieDivs(makeMovies);
+        })
+    }, []);
 
     return (
         <React.Fragment>
@@ -278,7 +290,7 @@ function MoviePage(props) {
                 setRatings("Not rated");
             }
         })
-    }, []);
+    }, [ratings]);
 
     return (
         <React.Fragment>
@@ -302,6 +314,8 @@ function MoviePage(props) {
 
 function UserMovieRating(props) {
     const {currentUser, aMovie, userRating, setUserRating} = props;
+    const [newRating, setNewRating] = React.useState("");
+    
     React.useEffect(() => {
         fetch("/api/user-rating", {
             method: "POST",
@@ -327,13 +341,89 @@ function UserMovieRating(props) {
         })
     }, [userRating]);
 
+    const handleNewRating = (e) => {
+        e.preventDefault();
+
+        fetch("/api/create-rating", {
+            method: "POST",
+            body: JSON.stringify({
+                "userId": currentUser.userId,
+                "movieId": aMovie.movie_id,
+                "score": newRating,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data.msg);
+            setUserRating(newRating);
+        })
+    };
+
     return (
-        <p><b>Your Rating: </b> {userRating}</p>    
+        <React.Fragment>
+            <p><b>Your Rating: </b> {userRating}</p>
+            <form onSubmit={(e) => handleNewRating(e)}>
+                <p>
+                    <label htmlFor="score_input">Choose a rating:</label>
+                    <select name="score" id="score_input" onChange={(event) => setNewRating(event.target.value)}>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </p>
+                <p>
+                    <button type="submit">Rate</button>
+                </p>
+            </form>
+        </React.Fragment>
     );
 }
 
 function AllUsersPage(props) {
+    const {aUser, setAUser} = props;
+    const [userDivs, setUserDivs] = React.useState([]);
+
+    // Make API call to server for users data
+    React.useEffect(() => {
+        const makeUsers = [];
+        fetch("/api/users")
+        .then((response) => response.json())
+        .then((users) => {
+            for (let userId in users) {
+                makeUsers.push(
+                    <div key={users[userId].user_id}>
+                        <ReactRouterDOM.Link to={`/users/${userId}`} onClick={() => setAUser(users[userId])}>
+                            <p>User {users[userId].user_id}</p>
+                        </ReactRouterDOM.Link>
+                    </div>
+                );
+            }
+            setUserDivs(makeUsers);
+        })
+    }, []);
+
     return (
-        <div>All Users</div>
+        <React.Fragment>
+            <h1>Users</h1>
+            <div>
+                {userDivs}
+            </div>
+        </React.Fragment>
+    );
+}
+
+function UserPage(props) {
+    const {aUser} = props;
+
+    return (
+        <React.Fragment>
+            <h1>User {aUser.user_id}</h1>
+            <p>email: {aUser.email}</p>
+        </React.Fragment>
     );
 }

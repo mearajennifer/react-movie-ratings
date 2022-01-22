@@ -1,29 +1,8 @@
 function App() {
     const [currentUser, setCurrentUser] = React.useState({});
-    const [users, setUsers] = React.useState({});
-    const [movies, setMovies] =  React.useState({});
     const [loggedIn, setLoggedIn] = React.useState(false);
     const [aMovie, setAMovie] = React.useState({});
-
-
-    // Make API call to server for movies data
-    React.useEffect(() => {
-        fetch("/api/movies")
-            .then((response) => response.json())
-            .then((movieData) => {
-                setMovies(movieData);
-            })
-    }, []);
-
-    // Make API call to server for users data
-    React.useEffect(() => {
-        fetch("/api/users")
-            .then((response) => response.json())
-            .then((usersData) => {
-                setUsers(usersData);
-            })
-    }, []);
-
+    const [aUser, setAUser] = React.useState({});
 
     return (
         <ReactRouterDOM.BrowserRouter>
@@ -42,8 +21,7 @@ function App() {
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route exact path="/movies">
-                    <AllMoviesPage 
-                        movies={movies} 
+                    <AllMoviesPage  
                         aMovie={aMovie} 
                         setAMovie={setAMovie}/>
                 </ReactRouterDOM.Route>
@@ -56,7 +34,13 @@ function App() {
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route exact path="/users">
-                    <AllUsersPage users={users} />
+                    <AllUsersPage 
+                        aUser={aUser} 
+                        setAUser={setAUser}/>
+                </ReactRouterDOM.Route>
+
+                <ReactRouterDOM.Route path="/users/:id">
+                    <UserPage aUser={aUser} />
                 </ReactRouterDOM.Route>
             </div>
 

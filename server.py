@@ -20,10 +20,12 @@ GENRES = ["Action", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance"
 def show_homepage():
     return render_template("index.html")
 
+
 @app.route("/api/movies")
 def show_all_movies():
     movies = crud.query_all_movies()
     return jsonify({movie.movie_id: movie.to_dict() for movie in movies})
+
 
 @app.route("/api/avg-movie-rating", methods=["POST"])
 def get_avg_movie_ratings():
@@ -50,6 +52,7 @@ def get_avg_movie_ratings():
     
     return jsonify({"success": success, "avgRating": avg_rating, "count": count})
 
+
 @app.route("/api/user-rating", methods=["POST"])
 def get_user_movie_rating():
     movie_id = request.json.get("movieId")
@@ -59,72 +62,55 @@ def get_user_movie_rating():
     print(f"user_id: {user_id}")
     
     success = False
-    rating = None;
+    rating_score = None
 
     if user_id:
         user = crud.query_user_by_id(user_id)
         movie = crud.query_movie_by_id(movie_id)
-
     
         rating = crud.query_rating(user, movie)
         if rating:
             success = True
+            rating_score = rating.score            
     
-    print({"success": success, "rating": rating.score})
+    print({"success": success, "rating": rating_score})
     print()
     
-    return jsonify({"success": success, "rating": rating.score})
-        
+    return jsonify({"success": success, "rating": rating_score})
 
-# @app.route("/api/movies/<movie_id>")
-# def show_movie(movie_id):
-#     movie = crud.query_movie_by_id(movie_id)
 
-#     if "user_id" in session:
-#         user = crud.query_user_by_id(session["user_id"])
-#         rating = crud.query_rating(user, movie)
-#     else:
-#         rating = None
-    
-#     average = crud.get_average_movie_rating(movie)
+@app.route("/api/create-rating", methods=["POST"])
+def create_rating():
+    user_id = request.json.get("userId")
+    movie_id = request.json.get("movieId")
+    score = request.json.get("score")
 
-#     return render_template('movie_details.html', movie=movie, rating=rating, average=average)
+    user = crud.query_user_by_id(user_id)
+    movie = crud.query_movie_by_id(movie_id)
 
-# @app.route("/movies/<movie_id>/rate", methods=["POST"])
-# def create_rating(movie_id):
-#     if "user_id" not in session:
-#         flash("Please login to start rating movies.")
-#         return redirect("/")
+    rating = crud.query_rating(user, movie)
+    # {{ '%0.2f'| format(average|float) }}
 
-#     user_id = session["user_id"]
-#     score = request.form.get("score")
+    if rating:
+        crud.update_rating(rating, score)
+    else:
+        new_rating = crud.create_rating(user, movie, score)
 
-#     user = crud.query_user_by_id(user_id)
-#     movie = crud.query_movie_by_id(movie_id)
+    return jsonify({"success": True, "msg": f"You've rated rated {movie.title} {score} out of 5."})
 
-#     rating = crud.query_rating(user, movie)
-#     # {{ '%0.2f'| format(average|float) }}
-
-#     if rating:
-#         crud.update_rating(rating, score)
-#     else:
-#         new_rating = crud.create_rating(user, movie, score)
-
-#     flash(f"You've rated rated {movie.title} {score} out of 5.")
-
-#     return redirect(f"/movies/{movie.movie_id}")
 
 @app.route("/api/users", methods=["GET"])
 def show_all_users():
     users = crud.query_all_users()
     return jsonify({user.user_id: user.to_dict() for user in users})
 
+
 @app.route("/api/register", methods=["POST"])
 def register_user():
     """Create user."""
 
-    email = request.json.get("email")
-    password = request.json.get("pass")
+    email = request.json.get("regEmail")
+    password = request.json.get("regPass")
     print()
     print(f"Received register email:{email}, pass: {password}")
     print()

@@ -10,9 +10,14 @@ Completed:
 - Individual movies component
 - Average rating for a movie
 - Users rating for a movie
+- Make a rating
+- Users component
 
 To Do:
-- Users component
 - Search component
-- Make a rating
 - React-Bootstrap
+- Log out
+- Add columns to users table
+    - Update user profile component
+    - Update user page component
+- Style/CSS
