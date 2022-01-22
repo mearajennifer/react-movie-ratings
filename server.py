@@ -27,9 +27,17 @@ def show_all_movies():
     return jsonify({movie.movie_id: movie.to_dict() for movie in movies})
 
 
+@app.route("/api/movies/details", methods=["POST"])
+def get_movie_details():
+    movie_id = request.json.get("movieId")
+    movie = crud.query_movie_by_id(movie_id)
+
+    return jsonify({movie.movie_id: movie.to_dict()})
+
+
 @app.route("/api/avg-movie-rating", methods=["POST"])
 def get_avg_movie_ratings():
-    movie_id = request.json.get("movie_id")
+    movie_id = request.json.get("movieId")
     print()
     print(f"id: {movie_id}")
 
@@ -59,7 +67,7 @@ def get_user_movie_rating():
     user_id = request.json.get("userId")
     print()
     print(f"id: {movie_id}")
-    print(f"user_id: {user_id}")
+    print(f"userId: {user_id}")
     
     success = False
     rating_score = None
@@ -159,7 +167,7 @@ def login_user():
         "success": success, 
         "msg": msg, 
         "user": {
-            "user_id": user.user_id,
+            "userId": user.user_id,
             "email": user.email,
         }
     })
@@ -197,7 +205,7 @@ def get_user_ratings():
         user_ratings.append({
             "movieId": rating.movie_id,
             "movieTitle": rating.movie.title,
-            "movieImg": rating.movie.poster_path,
+            "posterPath": rating.movie.poster_path,
             "userRating": rating.score,
         })
 

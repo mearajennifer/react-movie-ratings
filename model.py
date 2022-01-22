@@ -23,7 +23,7 @@ class User(db.Model):
         return f"<User id={self.user_id} email={self.email}"
     
     def to_dict(self):
-        return {'user_id': self.user_id,
+        return {'userId': self.user_id,
                 'email': self.email}
 
 class Movie(db.Model):
@@ -44,11 +44,11 @@ class Movie(db.Model):
         return f"<Movie id={self.movie_id} title={self.title}"
     
     def to_dict(self):
-        return {'movie_id': self.movie_id,
+        return {'movieId': self.movie_id,
                 'title': self.title,
                 'overview': self.overview,
-                'release_date': self.release_date,
-                'poster_path': self.poster_path}
+                'releaseDate': self.release_date,
+                'posterPath': self.poster_path}
 
 class Rating(db.Model):
     """A rating."""

@@ -13,7 +13,8 @@ function App() {
                     { loggedIn ? 
                     <UserProfile 
                         currentUser={currentUser} 
-                        loggedIn={loggedIn} /> : 
+                        loggedIn={loggedIn} 
+                        setAMovie={setAMovie} /> : 
                     <Login currentUser={currentUser} 
                         setCurrentUser={setCurrentUser} 
                         loggedIn={loggedIn}
@@ -29,6 +30,7 @@ function App() {
                 <ReactRouterDOM.Route path="/movies/:id">
                     <MoviePage 
                         aMovie={aMovie} 
+                        setAMovie={setAMovie} 
                         currentUser={currentUser} 
                         loggedIn={loggedIn}/>
                 </ReactRouterDOM.Route>
