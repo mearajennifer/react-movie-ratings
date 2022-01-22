@@ -12,6 +12,7 @@ Completed:
 - Users rating for a movie
 - Make a rating
 - Users component
+- Display sorted movies and ratings
 
 To Do:
 - Search component
@@ -21,3 +22,4 @@ To Do:
     - Update user profile component
     - Update user page component
 - Style/CSS
+- Update avg rating after current user rates

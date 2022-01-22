@@ -33,7 +33,7 @@ function AllUsersPage(props) {
 }
 
 function UserPage(props) {
-    const {aUser} = props;
+    const {aUser, aMovie, setAMovie} = props;
     const [userRatingDivs, setUserRatingDivs] = React.useState([]);
 
     // make api call to get user ratings
@@ -53,7 +53,7 @@ function UserPage(props) {
             for (let i=0; i<userRatings.length; i+=1) {
                 makeUserRatings.push(
                     <div key={userRatings[i].movieId}>
-                        <ReactRouterDOM.Link to={`/movies/${userRatings[i].movieId}`} onClick={() => props.setAMovie({"movieId": userRatings[i].movieId})}>
+                        <ReactRouterDOM.Link to={`/movies/${userRatings[i].movieId}`} onClick={() => setAMovie({"movieId": userRatings[i].movieId})}>
                             <img src={userRatings[i].posterPath} style={{height:"100px"}} />
                             <p>{userRatings[i].movieTitle}</p>
                             <p>{userRatings[i].userRating}</p>

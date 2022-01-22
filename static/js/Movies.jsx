@@ -9,13 +9,14 @@ function AllMoviesPage(props) {
         const makeMovies = [];
         fetch("/api/movies")
         .then((response) => response.json())
-        .then((movies) => {
-            for (let movieId in movies) {
+        .then((result) => {
+            const movies = result.movieData;
+            for (let movie of movies) {
                 makeMovies.push(
-                    <div key={movies[movieId].movieId}>
-                        <ReactRouterDOM.Link to={`/movies/${movieId}`} onClick={() => setAMovie({"movieId": movieId})}>
-                            <img src={movies[movieId].posterPath} style={{height:"100px"}} />
-                            <p>{movies[movieId].title}</p>
+                    <div key={movie.movieId}>
+                        <ReactRouterDOM.Link to={`/movies/${movie.movieId}`} onClick={() => setAMovie({"movieId": movie.movieId})}>
+                            <img src={movie.posterPath} style={{height:"100px"}} />
+                            <p>{movie.title}</p>
                         </ReactRouterDOM.Link>
                     </div>
                 );

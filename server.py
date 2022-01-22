@@ -24,7 +24,9 @@ def show_homepage():
 @app.route("/api/movies")
 def show_all_movies():
     movies = crud.query_all_movies()
-    return jsonify({movie.movie_id: movie.to_dict() for movie in movies})
+    movies.sort(key=lambda x: x.title)
+    movie_dict = {"movieData": [movie.to_dict() for movie in movies]}
+    return jsonify(movie_dict)
 
 
 @app.route("/api/movies/details", methods=["POST"])
@@ -66,6 +68,7 @@ def get_user_movie_rating():
     movie_id = request.json.get("movieId")
     user_id = request.json.get("userId")
     print()
+    print("/api/user-rating")
     print(f"id: {movie_id}")
     print(f"userId: {user_id}")
     
@@ -193,8 +196,11 @@ def get_user_data():
 def get_user_ratings():
     user_id = request.json.get("userId")
     ratings = Rating.query.filter_by(user_id=user_id).all()
+    ratings.sort(key=lambda x: x.movie.title)
+
     print()
-    print(f"user_id is {user_id}")
+    print("/api/user-rating")
+    print(f"user_id {user_id}")
     print("ratings are")
     
 
