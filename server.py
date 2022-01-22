@@ -196,8 +196,7 @@ def get_user_ratings():
     print()
     print(f"user_id is {user_id}")
     print("ratings are")
-    print(ratings)
-    print()
+    
 
     user_ratings = []
 
@@ -208,6 +207,8 @@ def get_user_ratings():
             "posterPath": rating.movie.poster_path,
             "userRating": rating.score,
         })
+    print(user_ratings)
+    print()
 
     return jsonify({"userRatings": user_ratings})
 

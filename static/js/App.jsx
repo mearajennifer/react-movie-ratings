@@ -42,7 +42,10 @@ function App() {
                 </ReactRouterDOM.Route>
 
                 <ReactRouterDOM.Route path="/users/:id">
-                    <UserPage aUser={aUser} />
+                    <UserPage 
+                        aUser={aUser}
+                        aMovie={aMovie}
+                        setAMovie={setAMovie} />
                 </ReactRouterDOM.Route>
             </div>
 

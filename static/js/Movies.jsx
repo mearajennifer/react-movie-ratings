@@ -1,4 +1,4 @@
-const { useState } = require("react");
+
 
 function AllMoviesPage(props) {
     const {aMovie, setAMovie} = props;

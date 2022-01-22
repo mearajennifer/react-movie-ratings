@@ -1,4 +1,3 @@
-const { useState } = require("react");
 
 function Login(props) {
     const [regEmail, setRegEmail] = React.useState("");
@@ -120,9 +119,9 @@ function Login(props) {
 
 
 function UserProfile(props) {
-    const [userName, setUserName] = React.useState("");
-    const [favMovie, setFavMovie] = React.useState("");
-    const [favGenre, setFavGenre] = React.useState("");
+    const [profileName, setProfileName] = React.useState("");
+    const [profileMovie, setProfileMovie] = React.useState("");
+    const [profileGenre, setProfileGenre] = React.useState("");
     const [ratingDivs, setRatingDivs] = React.useState([]);
     console.log(props.loggedIn);
     console.log(props.currentUser.userId)
@@ -140,9 +139,9 @@ function UserProfile(props) {
         .then((result) => {
             console.log("user data is:");
             console.log(result);
-            setUserName(result.userId);
-            setFavMovie(result.favMovie)
-            setFavGenre(result.favGenre)
+            setProfileName(result.userId);
+            setProfileMovie(result.favMovie)
+            setProfileGenre(result.favGenre)
         })
     }, [props.currentUser]);
 
@@ -180,9 +179,9 @@ function UserProfile(props) {
     return (
         <React.Fragment>
             <div>
-                <h2>Profile: {userName}</h2>
-                <p>Favorite Movie: {favMovie}</p>
-                <p>Favorite Genre: {favGenre}</p>
+                <h1>Welcome, {profileName}</h1>
+                <p>Favorite Movie: {profileMovie}</p>
+                <p>Favorite Genre: {profileGenre}</p>
             </div>
             <h3>Your ratings:</h3>
             <div>
