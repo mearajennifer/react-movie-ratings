@@ -23,7 +23,7 @@ function AllUsersPage(props) {
     }, []);
 
     return (
-        <React.Fragment>``
+        <React.Fragment>
             <h1>Users</h1>
             <div>
                 {userDivs}

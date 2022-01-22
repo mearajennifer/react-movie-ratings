@@ -9,7 +9,9 @@ function Loading() {
 }
 
 
-function Navbar() {
+function Navbar(props) {
+    const {loggedIn, setLoggedIn, setCurrentUser } = props;
+
     return (
         <nav>
             <ReactRouterDOM.Link to="/">
@@ -27,6 +29,15 @@ function Navbar() {
                     <img src="https://img.icons8.com/external-icongeek26-linear-colour-icongeek26/40/000000/external-pop-corn-party-icongeek26-linear-colour-icongeek26.png"/>
                     Users
                 </ReactRouterDOM.NavLink>
+
+                { loggedIn ?
+                    <button onClick={() => {
+                        setCurrentUser({});
+                        setLoggedIn(false);
+                    }}>
+                        Logout
+                    </button> :
+                    <p></p> }
             </section>
         </nav>
     );

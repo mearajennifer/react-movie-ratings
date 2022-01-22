@@ -6,7 +6,10 @@ function App() {
 
     return (
         <ReactRouterDOM.BrowserRouter>
-            <Navbar />
+            <Navbar 
+                loggedIn={loggedIn} 
+                setLoggedIn={setLoggedIn} 
+                setCurrentUser={setCurrentUser} />
 
             <div className="container-fluid">
                 <ReactRouterDOM.Route exact path="/">
