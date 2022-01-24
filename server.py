@@ -1,7 +1,7 @@
 """Server for movie ratings app."""
 
 from flask import (Flask, render_template, request, session, jsonify)
-from model import connect_to_db, User, Movie, Rating
+from model import connect_to_db, User, Movie, Rating, db
 import crud
 from random import randint, choice
 
@@ -218,6 +218,50 @@ def get_user_ratings():
 
     return jsonify({"userRatings": user_ratings})
 
+
+@app.route("/api/search", methods=["POST"])
+def search_movies():
+    title_search = request.json.get("title", None)
+    if title_search:
+        title_search = title_search.title()
+    rating_search = request.json.get("avgRating", None)
+    print(f"title: {title_search}, rating: {rating_search}")
+    
+    results = []
+
+    if title_search and not rating_search:
+        search_term = f"%{title_search}%"
+        results = Movie.query.filter(Movie.title.like(search_term)).all()
+
+    elif rating_search and not title_search:
+        movies = Movie.query.options(db.joinedload("ratings")).all()
+        for movie in movies:
+            count = len(movie.ratings)
+            if count:
+                rating_sum = sum([rating.score for rating in movie.ratings])
+                avg_score = int(round(rating_sum / count))
+                if avg_score >= int(rating_search):
+                    results.append(movie)
+
+    elif rating_search and title_search:
+        search_term = f"%{title_search}%"
+        movies = Movie.query.options(db.joinedload("ratings")).filter(Movie.title.like(search_term)).all()
+        for movie in movies:
+            count = len(movie.ratings)
+            if count:
+                rating_sum = sum([rating.score for rating in movie.ratings])
+                avg_score = int(round(rating_sum / count))
+                if avg_score >= int(rating_search):
+                    results.append(movie)
+    
+    if results:
+        search_results = [result.to_dict() for result in results]
+        print()
+        print(search_results[0])
+        print()
+        search_results.sort(key=lambda x: x["title"])
+
+    return jsonify({"searchResults": search_results})
 
 
 if __name__ == "__main__":

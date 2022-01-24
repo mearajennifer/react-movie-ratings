@@ -173,6 +173,7 @@ function UserMovieRating(props) {
                 <p>
                     <label htmlFor="score_input">Choose a rating:</label>
                     <select name="score" id="score_input" onChange={(event) => setNewRating(event.target.value)}>
+                        <option value="" selected></option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>

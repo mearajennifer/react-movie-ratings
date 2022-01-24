@@ -13,11 +13,11 @@ Completed:
 - Make a rating
 - Users component
 - Display sorted movies and ratings
+- Log out
+- Search component
 
 To Do:
-- Search component
 - React-Bootstrap
-- Log out
 - Add columns to users table
     - Update user profile component
     - Update user page component

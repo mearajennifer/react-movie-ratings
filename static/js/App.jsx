@@ -50,6 +50,10 @@ function App() {
                         aMovie={aMovie}
                         setAMovie={setAMovie} />
                 </ReactRouterDOM.Route>
+
+                <ReactRouterDOM.Route exact path="/search">
+                    <SearchPage setAMovie={setAMovie} />
+                </ReactRouterDOM.Route>
             </div>
 
         </ReactRouterDOM.BrowserRouter>
